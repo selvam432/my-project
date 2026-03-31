@@ -5,3 +5,6 @@ flask-jwt-extended
 pymysql
 python-dotenv
 gunicorn
+numpy
+pandas
+scikit-learn
