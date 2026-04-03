@@ -8,3 +8,4 @@ gunicorn
 numpy
 pandas
 scikit-learn
+psycopg2-binary
