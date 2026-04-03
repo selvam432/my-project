@@ -1,31 +1,39 @@
 import axios from 'axios'
 
-// ── API Base URL ──────────────────────────────────────────────
-// In production (Vercel), VITE_API_URL will be your Render backend URL
-// In local development, it falls back to /api (proxied by Vite)
-const BASE_URL = import.meta.env.VITE_API_URL || '/api'
+// ── Render backend URL ────────────────────────────────────────
+// VITE_API_URL is set in Vercel Environment Variables
+// Local dev: falls back to /api (Vite proxy → localhost:5000)
+const BASE_URL = import.meta.env.VITE_API_URL
+  ? import.meta.env.VITE_API_URL
+  : '/api'
 
 const api = axios.create({
   baseURL: BASE_URL,
-  withCredentials: false,  // false for cross-origin Render + Vercel
-  headers: {
-    'Content-Type': 'application/json',
-  }
+  withCredentials: false,
 })
 
-// Attach JWT token to every request
+// ── Attach JWT token to every request ────────────────────────
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
+
+  // Let browser set Content-Type for FormData (multipart uploads)
+  // For regular requests, default to JSON
+  if (!(config.data instanceof FormData)) {
+    config.headers['Content-Type'] = 'application/json'
+  }
+
   return config
 })
 
-// Handle 401 — redirect to login
+// ── Handle errors ─────────────────────────────────────────────
 api.interceptors.response.use(
   res => res,
   err => {
+    console.error('API Error:', err.response?.status, err.response?.data)
+
     if (err.response?.status === 401) {
       localStorage.removeItem('token')
       localStorage.removeItem('user')
