@@ -1,5 +1,6 @@
 from flask import Flask, send_from_directory
 from flask_cors import CORS
+CORS(app, supports_credentials=True)  # allow all origins (for development)
 from flask_jwt_extended import JWTManager
 from extensions import db
 from routes.auth import auth_bp
