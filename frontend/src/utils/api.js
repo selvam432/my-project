@@ -1,13 +1,13 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: 'https://my-project-8-5nc3.onrender.com/api',
   withCredentials: true,
 })
 
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('token')
-  if (token) config.headers.Authorization = `Bearer ${token}`
+  if (token) config.headers.Authorization =` Bearer ${token}`
   return config
 })
 
